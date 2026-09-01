@@ -19,26 +19,11 @@ jobs:
 
       - run: npm ci
 
-      - name: Check database integrity
-        run: node -e "
-          const db = JSON.parse(require('fs').readFileSync('db.json', 'utf8'));
-          const prospects = db.prospects || [];
-          console.log('Prospects:', prospects.length);
-          if (prospects.length === 0) process.exit(1);
-          const withEmail = prospects.filter(p => p.email);
-          console.log('With email:', withEmail.length);
-        "
+      - name: Check database
+        run: node -e "const db = JSON.parse(require('fs').readFileSync('db.json', 'utf8')); const p = db.prospects || []; console.log('Prospects:', p.length); if (p.length === 0) process.exit(1);"
 
-      - name: Check templates integrity
-        run: node -e "
-          const t = JSON.parse(require('fs').readFileSync('data/all-email-templates.json', 'utf8'));
-          console.log('Templates:', (t.templates || []).length);
-          if (!t.templates || t.templates.length === 0) process.exit(1);
-        "
+      - name: Check templates
+        run: node -e "const t = JSON.parse(require('fs').readFileSync('data/all-email-templates.json', 'utf8')); console.log('Templates:', (t.templates || []).length); if (!t.templates || t.templates.length === 0) process.exit(1);"
 
-      - name: Check disposable domains
-        run: node -e "
-          const d = JSON.parse(require('fs').readFileSync('data/disposable-domains.json', 'utf8'));
-          console.log('Disposable domains:', (d.domains || []).length);
-          if (!d.domains || d.domains.length === 0) process.exit(1);
-        "
+      - name: Check domains
+        run: node -e "const d = JSON.parse(require('fs').readFileSync('data/disposable-domains.json', 'utf8')); console.log('Domains:', (d.domains || []).length); if (!d.domains || d.domains.length === 0) process.exit(1);"
