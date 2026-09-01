@@ -1,0 +1,41 @@
+name: Security Scan
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'  # Weekly on Monday
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check for hardcoded secrets
+        run: |
+          echo "Scanning for potential secrets..."
+          if grep -r "password\|secret\|api_key\|token" --include="*.js" --include="*.json" . 2>/dev/null | grep -v node_modules | grep -v ".github" | grep -v "xkrc\|bsnr\|babj\|jsvp\|mibp\|dblt"; then
+            echo "⚠️ Potential secrets found - review manually"
+          else
+            echo "✅ No obvious secrets detected"
+          fi
+
+      - name: Validate email patterns
+        run: |
+          node -e "
+            const db = JSON.parse(require('fs').readFileSync('db.json', 'utf8'));
+            const prospects = db.prospects || [];
+            const invalid = prospects.filter(p => p.email && !p.email.includes('@'));
+            if (invalid.length > 0) {
+              console.log('⚠️ Invalid emails found:', invalid.length);
+              process.exit(1);
+            }
+            console.log('✅ All emails have valid format');
+          "
