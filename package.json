@@ -1,0 +1,15 @@
+{
+  "name": "prospects",
+  "version": "1.0.0",
+  "description": "Complete lead generation system with 2,995 validated Philippine business prospects.",
+  "main": "analytics-dashboard.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.2.1",
+    "nodemailer": "^9.1.0"
+  }
+}
